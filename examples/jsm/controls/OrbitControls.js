@@ -58,6 +58,12 @@ class OrbitControls extends EventDispatcher {
 		// If set, the interval [ min, max ] must be a sub-interval of [ - 2 PI, 2 PI ], with ( max - min < 2 PI )
 		this.minAzimuthAngle = - Infinity; // radians
 		this.maxAzimuthAngle = Infinity; // radians
+		
+		// Limit the camera's movement within a spherical volume
+		// Set maxPanRadius to ensure the camera doesn't travel further than maxPanRadius from the origin
+		// Set minPanRadius to force the camera to stay at least minPanRadius from the origin.
+		this.minPanRadius = 0;
+		this.maxPanRadius = Infinity;
 
 		// Set to true to enable damping (inertia)
 		// If damping is enabled, you must call controls.update() in your animation loop
@@ -248,6 +254,9 @@ class OrbitControls extends EventDispatcher {
 					scope.target.add( panOffset );
 
 				}
+				
+				// Limit the camera's movement within a spherical volume
+				scope.target.clampLength(scope.minPanRadius, scope.maxPanRadius);
 
 				// adjust the camera position based on zoom only if we're not zooming to the cursor or if it's an ortho camera
 				// we adjust zoom later in these cases
